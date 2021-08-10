@@ -229,8 +229,7 @@ pub mod pallet {
 
 			let request = <Requests<T>>::take(request_id.clone()).expect("bad");
 
-			//fixme type VecDeque<u64>
-			//let tmpToken: &vec<u8> = &request.unwrap().token;
+			ensure!(<OracleResults<T>>::contains_key(&request.token), Error::<T>::UnknownRequest);
 			//let mut buf : VecDeque<u64> = Self::oracle_results(&request.token).into_iter().collect();
 			let mut buf : VecDeque<u64> = OracleResults::<T>::get(&request.token).expect("bad").into_iter().collect();
 
