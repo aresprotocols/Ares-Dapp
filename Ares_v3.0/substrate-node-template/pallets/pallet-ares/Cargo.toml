@@ -26,6 +26,7 @@ serde = '1.0.119'
 sp-core = {default-features = false, version = '3.0.0', git = 'https://github.com/paritytech/substrate.git', tag = 'monthly-2021-05'}
 sp-io = {default-features = false, version = '3.0.0', git = 'https://github.com/paritytech/substrate.git', tag = 'monthly-2021-05'}
 sp-runtime = {default-features = false, version = '3.0.0', git = 'https://github.com/paritytech/substrate.git', tag = 'monthly-2021-05'}
+sp-std = { default-features = false, version = '3.0.0' }
 
 [features]
 default = ['std']
@@ -33,5 +34,7 @@ std = [
 	'codec/std',
 	'frame-support/std',
 	'frame-system/std',
+	"sp-std/std",
+	"sp-runtime/std",
 ]
 try-runtime = ['frame-support/try-runtime']
