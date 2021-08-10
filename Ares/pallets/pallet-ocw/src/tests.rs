@@ -5,14 +5,6 @@ use crate::mock::ExternalityBuilder;
 
 #[test]
 fn it_works_for_default_value() {
-    // new_test_ext().execute_with(|| {
-    //     // Dispatch a signed extrinsic.
-    //     let acct: <Test as frame_system::Config>::AccountId = Default::default();
-    //     assert_ok!(OCWModule::do_something(Origin::signed(acct), 42));
-    //     // Read pallet storage and assert an expected result.
-    //     assert_eq!(OCWModule::something(), Some(42));
-    // });
-
     let (mut t, _, _) = ExternalityBuilder::build();
     t.execute_with(|| {
         // Dispatch a signed extrinsic.
@@ -68,9 +60,9 @@ fn add_price_signed_works() {
         assert_eq!(<Prices>::get(), vec![num]);
         // An event is emitted
         // LINHAI Hide it.
-        // assert!(System::events()
-        //     .iter()
-        //     .any(|er| er.event == Event::pallet_ocw(RawEvent::NewPrice(num, acct))));
+        assert!(System::events()
+            .iter()
+            .any(|er| er.event == Event::pallet_ocw(RawEvent::NewPrice(num, acct))));
 
         // Insert another number
         let num2 = num * 2;
