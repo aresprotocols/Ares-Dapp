@@ -35,6 +35,7 @@ pub trait Config: frame_system::Config {
     type AggregateInterval: Get<Self::BlockNumber>;
 }
 
+
 // Uniquely identify a request's specification understood by an Aggregator
 pub type TokenSpec = Vec<u8>;
 
@@ -149,8 +150,9 @@ decl_module! {
 		// Fails with `AggregatorAlreadyRegistered` if this Aggregator (identified by `origin`) has already been registered.
 		#[weight = 10_000]
 		pub fn register_aggregator(origin, source: Vec<u8>, alias: Vec<u8>, url: Vec<u8>) -> dispatch::DispatchResult {
+			// 获取当期操作用户
 			let who : <T as frame_system::Config>::AccountId = ensure_signed(origin)?;
-
+			// TODO::查找 Aggregators Store 中的关联键值是否已经存在
 			ensure!(!<Aggregators<T>>::contains_key(who.clone()), Error::<T>::AggregatorAlreadyRegistered);
 
 			let now = frame_system::Module::<T>::block_number();
@@ -298,6 +300,7 @@ impl<T: Config> Module<T> {
     pub fn get_aggrage_price(_token_identifier:Vec<u8>) -> u64 {
         let mut price: u64 = 0;
         if <AggregatorResults<T>>::contains_key(&_token_identifier) {
+			// 获取某个 token 标识符的聚合数据
             let aggragate = Self::aggregator_results(_token_identifier);
             // let price=aggragate::price;
             return aggragate.price;
@@ -306,6 +309,7 @@ impl<T: Config> Module<T> {
         }
 
     }
+	// 求平均值
     fn average_price(prices: Vec<u64>) -> u64 {
         if prices.len() <= 2 {
             prices.iter().fold(0_u64, |a, b| a.saturating_add(*b)) / prices.len() as u64

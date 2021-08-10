@@ -1,4 +1,4 @@
-use crate as pallet_ares;
+use crate as pallet_template;
 use sp_core::H256;
 use frame_support::parameter_types;
 use sp_runtime::{
@@ -9,7 +9,6 @@ use frame_system as system;
 type UncheckedExtrinsic = frame_system::mocking::MockUncheckedExtrinsic<Test>;
 type Block = frame_system::mocking::MockBlock<Test>;
 
-
 // Configure a mock runtime to test the pallet.
 frame_support::construct_runtime!(
 	pub enum Test where
@@ -18,7 +17,7 @@ frame_support::construct_runtime!(
 		UncheckedExtrinsic = UncheckedExtrinsic,
 	{
 		System: frame_system::{Module, Call, Config, Storage, Event<T>},
-        AresModule: pallet_ares::{Module, Call, Storage, Event<T>},
+		TemplateModule: pallet_template::{Module, Call, Storage, Event<T>},
 	}
 );
 
@@ -52,17 +51,8 @@ impl system::Config for Test {
     type SS58Prefix = SS58Prefix;
 }
 
-parameter_types! {
-	pub const ValidityPeriod: u64 = 10;
-	pub const AggregateQueueNum: u32 = 10;
-	pub const AggregateInterval: u64 = 15;
-}
-
-impl pallet_ares::Config for Test {
+impl pallet_template::Config for Test {
     type Event = Event;
-    type ValidityPeriod = ValidityPeriod;
-    type AggregateQueueNum = AggregateQueueNum;
-    type AggregateInterval = AggregateInterval;
 }
 
 // Build genesis storage according to the mock runtime.
