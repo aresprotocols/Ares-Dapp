@@ -252,50 +252,51 @@ pub mod pallet {
 
 		// Identify requests that are considered dead and remove them
 		// on chain aggregator result
-		//#[pallet::weight(10_000)]
-		// fn on_finalize(n: T::BlockNumber) {
-		// 	for (request_identifier, request) in Requests::<T>::iter() {
-		// 		if n > request.block_number + T::ValidityPeriod::get() {
-		// 			// No result has been received in time
-		// 			Requests::<T>::remove(request_identifier);
+		#[pallet::weight(10_000)]
+		fn on_finalize(origin: OriginFor<T>, n: T::BlockNumber) -> DispatchResult {
+			for (request_identifier, request) in Requests::<T>::iter() {
+				if n > request.block_number + T::ValidityPeriod::get() {
+					// No result has been received in time
+					Requests::<T>::remove(request_identifier);
 
-		// 			Self::deposit_event(RawEvent::RemoveRequest(request_identifier));
-		// 		}
-		// 	}
+					Self::deposit_event(Event::RemoveRequest(request_identifier));
+				}
+			}
 
-		// 	for (token_identifier, price_vec) in OracleResults::iter() {
+			for (token_identifier, price_vec) in OracleResults::<T>::iter() {
 
-		// 		let mut price: u64 = 0;
-		// 		let mut find: bool = false;
+				let mut price: u64 = 0;
+				let mut find: bool = false;
 
-		// 		if <AggregatorResults<T>>::contains_key(&token_identifier) {
+				if <AggregatorResults<T>>::contains_key(&token_identifier) {
 
-		// 			if price_vec.len() >= T::AggregateQueueNum::get() as usize {
+					if price_vec.len() >= T::AggregateQueueNum::get() as usize {
 
-		// 				let request = Self::aggregator_results(&token_identifier);
+						let request = Self::aggregator_results(&token_identifier);
 
-		// 				if n > request.block_number + T::AggregateInterval::get() {
-		// 					// update
-		// 					 price = average_price(price_vec);
-		// 					 find = true;
-		// 				}
-		// 			}
-		// 		} else {
-		// 			price = average_price(price_vec);
-		// 			find = true;
-		// 		}
+						if n > request.unwrap().block_number + T::AggregateInterval::get() {
+							// update
+							 price = average_price(price_vec);
+							 find = true;
+						}
+					}
+				} else {
+					price = average_price(price_vec);
+					find = true;
+				}
 
-		// 		if find {
-		// 				<AggregatorResults::<T>>::insert(&token_identifier, AggregateResult {
-		// 					block_number: n,
-		// 					price,
-		// 				});
+				if find {
+						<AggregatorResults::<T>>::insert(&token_identifier, AggregateResult {
+							block_number: n,
+							price,
+						});
 
-		// 				Self::deposit_event(RawEvent::AggregatorResult(price));
-		// 		}
+						Self::deposit_event(Event::AggregatorResult(price));
+				}
 
-		// 	}
-		// }
+			}
+			Ok(())
+		}
 	}
 }
 
