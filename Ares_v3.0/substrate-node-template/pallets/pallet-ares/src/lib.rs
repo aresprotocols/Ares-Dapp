@@ -10,6 +10,12 @@ use frame_support::sp_runtime::RuntimeDebug;
 use frame_support::sp_runtime::traits::Hash;
 pub type TokenSpec = Vec<u8>;
 
+#[cfg(test)]
+mod mock;
+
+#[cfg(test)]
+mod tests;
+
 /// Aggregator which is desc info.
 #[derive(Encode, Decode, Clone, PartialEq, RuntimeDebug, Eq, Default)]
 pub struct Aggregator<AccountId, BlockNumber> {
@@ -197,7 +203,12 @@ pub mod pallet {
 
 			// Currently, one origin can only offload one computation per block. We should probably
 			// include some nonce in the hash so this limitation is lifted.
-			let request_id = NextRequestId::<T>::get().expect("bad");
+			//let request_id = 0;
+			let request_id = match NextRequestId::<T>::get() {
+				None => 0,
+				Some(num) => num,
+			};
+			//let request_id = NextRequestId::<T>::get().expect("bad");
 			NextRequestId::<T>::put(request_id + 1);
 
 			let work_id = (&who, frame_system::Pallet::<T>::block_number(), request_id)
@@ -218,7 +229,7 @@ pub mod pallet {
 
 		// when aggregator get price from outside will callback token price
 		#[pallet::weight(10_000)]
-        fn feed_result(origin: OriginFor<T>, request_id: u64, result: u64) -> DispatchResult {
+        pub fn feed_result(origin: OriginFor<T>, request_id: u64, result: u64) -> DispatchResult {
 			//let _who = ensure_signed(origin)?;
 			let who = ensure_signed(origin.clone())?;
 
@@ -226,13 +237,13 @@ pub mod pallet {
 			let aggregator = Self::requests(&request_id);
 
 			ensure!(aggregator.unwrap().aggregator_id == who, Error::<T>::WrongAggregator);
-
 			let request = <Requests<T>>::take(request_id.clone()).expect("bad");
-
-			ensure!(<OracleResults<T>>::contains_key(&request.token), Error::<T>::UnknownRequest);
-			//let mut buf : VecDeque<u64> = Self::oracle_results(&request.token).into_iter().collect();
-			let mut buf : VecDeque<u64> = OracleResults::<T>::get(&request.token).expect("bad").into_iter().collect();
-
+			
+			//let mut buf : VecDeque<u64> = OracleResults::<T>::get(&request.token).expect("bad").into_iter().collect();
+			let mut buf : VecDeque<u64> = match OracleResults::<T>::get(&request.token) {
+				None => VecDeque::new(),
+				Some(num) => num.into_iter().collect(),
+			};
 
 			if buf.len() >= T::AggregateQueueNum::get() as usize {
 				let _ = buf.pop_front();
