@@ -5,13 +5,13 @@ pub use pallet::*;
 use codec::{Decode, Encode};
 //use frame_support::{debug, dispatch, ensure, traits::Get};
 //use frame_system::ensure_signed;
-//use sp_runtime::RuntimeDebug;
+use frame_support::sp_runtime::RuntimeDebug;
 //use sp_runtime::traits::Hash;
 use frame_support::sp_runtime::traits::Hash;
 pub type TokenSpec = Vec<u8>;
 
 /// Aggregator which is desc info.
-#[derive(Encode, Decode, Clone, PartialEq, Eq, Default)]
+#[derive(Encode, Decode, Clone, PartialEq, RuntimeDebug, Eq, Default)]
 pub struct Aggregator<AccountId, BlockNumber> {
 	pub account_id: AccountId,
 	/// Block number at the time register is created..
@@ -25,7 +25,7 @@ pub struct Aggregator<AccountId, BlockNumber> {
 }
 
 /// Requests which is quest info.
-#[derive(Encode, Decode, Clone, PartialEq, Eq, Default)]
+#[derive(Encode, Decode, Clone, PartialEq, RuntimeDebug, Eq, Default)]
 pub struct Request<AccountId, BlockNumber, Hash> {
 	pub aggregator_id: AccountId,
 	/// Block number at the time request is created..
@@ -37,7 +37,7 @@ pub struct Request<AccountId, BlockNumber, Hash> {
 }
 
 /// AggregateResult which is aggregate result.
-#[derive(Encode, Decode, Clone, PartialEq, Eq, Default)]
+#[derive(Encode, Decode, Clone, PartialEq, RuntimeDebug, Eq, Default)]
 pub struct AggregateResult<BlockNumber> {
 	/// Block number at the time aggregate is created..
 	pub block_number: BlockNumber,
@@ -50,7 +50,7 @@ pub mod pallet {
 	use super::*;
     use frame_support::{dispatch::DispatchResult, pallet_prelude::*};
     use frame_system::pallet_prelude::*;
-    use sp_std::vec::Vec; // Step 3.1 will include this in `Cargo.toml`
+    use sp_std::vec::Vec; 
 	use sp_std::{
 		collections::vec_deque::VecDeque,
 		prelude::*,
@@ -251,8 +251,8 @@ pub mod pallet {
 
 		// Identify requests that are considered dead and remove them
 		// on chain aggregator result
-		#[pallet::weight(10_000)]
-		fn on_finalize(origin: OriginFor<T>, n: T::BlockNumber) -> DispatchResult {
+		#[pallet::weight(1)]
+		fn on_finalize(_origin: OriginFor<T>, n: T::BlockNumber) -> DispatchResult {
 			for (request_identifier, request) in Requests::<T>::iter() {
 				if n > request.block_number + T::ValidityPeriod::get() {
 					// No result has been received in time
