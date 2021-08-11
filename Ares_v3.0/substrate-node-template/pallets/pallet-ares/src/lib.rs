@@ -2,6 +2,7 @@
 
 // Re-export pallet items so that they can be accessed from the crate namespace.
 pub use pallet::*;
+use sp_std::vec::Vec;
 use codec::{Decode, Encode};
 //use frame_support::{debug, dispatch, ensure, traits::Get};
 //use frame_system::ensure_signed;

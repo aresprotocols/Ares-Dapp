@@ -3720,6 +3720,7 @@ dependencies = [
  "frame-system-benchmarking",
  "frame-system-rpc-runtime-api",
  "hex-literal",
+ "pallet-ares",
  "pallet-aura",
  "pallet-balances",
  "pallet-grandpa",

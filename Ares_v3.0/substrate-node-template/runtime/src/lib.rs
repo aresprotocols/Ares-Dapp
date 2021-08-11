@@ -269,6 +269,21 @@ impl pallet_sudo::Config for Runtime {
 	type Call = Call;
 }
 
+
+parameter_types! {
+	pub const ValidityPeriod: u32 = 10;
+	pub const AggregateQueueNum: u32 = 10;
+	pub const AggregateInterval: u32 = 15;
+}
+
+/// Configure the ares pallet in pallets/pallet-ares.
+impl pallet_ares::Config for Runtime {
+	type Event = Event;
+	type ValidityPeriod = ValidityPeriod;
+	type AggregateQueueNum = AggregateQueueNum;
+	type AggregateInterval = AggregateInterval;
+}
+
 /// Configure the pallet-template in pallets/template.
 impl pallet_template::Config for Runtime {
 	type Event = Event;
@@ -290,6 +305,7 @@ construct_runtime!(
 		TransactionPayment: pallet_transaction_payment::{Pallet, Storage},
 		Sudo: pallet_sudo::{Pallet, Call, Config<T>, Storage, Event<T>},
 		// Include the custom logic from the pallet-template in the runtime.
+		AresModule: pallet_ares::{Pallet, Call, Storage, Event<T>},
 		TemplateModule: pallet_template::{Pallet, Call, Storage, Event<T>},
 	}
 );
