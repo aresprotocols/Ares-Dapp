@@ -8,7 +8,29 @@ async function main() {
     console.log("main enter, before connect to ws")
     // Construct
     const wsProvider = new WsProvider(wsAddr);
-    const api = await ApiPromise.create({ provider: wsProvider });
+    const api = await ApiPromise.create({ 
+        provider: wsProvider,
+        types: {
+            "TokenSpec": "Vec<u8>",
+            "Aggregator": {
+                "account_id": "AccountId",
+                "block_number": "BlockNumber",
+                "source": "Vec<u8>",
+                "alias": "Vec<u8>",
+                "url": "Vec<u8>"
+            },
+            "Request": {
+                "aggregator_id": "AccountId",
+                "block_number": "BlockNumber",
+                "token": "Vec<u8>",
+                "work_id": "Hash"
+            },
+            "AggregateResult": {
+                "block_number": "BlockNumber",
+                "price": "u64"
+            }
+        }
+    });
 
     // Do something
     //===================================
