@@ -39,6 +39,8 @@ pub use frame_support::{
 };
 use pallet_transaction_payment::CurrencyAdapter;
 
+use pallet_contracts::weights::WeightInfo;
+
 /// Import the template pallet.
 pub use pallet_template;
 
@@ -125,6 +127,22 @@ pub const SLOT_DURATION: u64 = MILLISECS_PER_BLOCK;
 pub const MINUTES: BlockNumber = 60_000 / (MILLISECS_PER_BLOCK as BlockNumber);
 pub const HOURS: BlockNumber = MINUTES * 60;
 pub const DAYS: BlockNumber = HOURS * 24;
+
+/*** Add This Block ***/
+// Contracts price units.
+pub const MILLICENTS: Balance = 1_000_000_000;
+pub const CENTS: Balance = 1_000 * MILLICENTS;
+pub const DOLLARS: Balance = 100 * CENTS;
+
+const fn deposit(items: u32, bytes: u32) -> Balance {
+   items as Balance * 15 * CENTS + (bytes as Balance) * 6 * CENTS
+}
+
+/// We assume that ~10% of the block weight is consumed by `on_initialize` handlers.
+/// This is used to limit the maximal weight of a single extrinsic.
+const AVERAGE_ON_INITIALIZE_RATIO: Perbill = Perbill::from_percent(10);
+
+/*** End Added Block ***/
 
 /// The version information used to identify this runtime when compiled natively.
 #[cfg(feature = "std")]
@@ -236,6 +254,56 @@ impl pallet_timestamp::Config for Runtime {
 	type WeightInfo = ();
 }
 
+/*** Add This Block ***/
+parameter_types! {
+	pub TombstoneDeposit: Balance = deposit(
+	   1,
+	   <pallet_contracts::Pallet<Runtime>>::contract_info_size()
+	);
+	pub DepositPerContract: Balance = TombstoneDeposit::get();
+	pub const DepositPerStorageByte: Balance = deposit(0, 1);
+	pub const DepositPerStorageItem: Balance = deposit(1, 0);
+	pub RentFraction: Perbill = Perbill::from_rational(1u32, 30 * DAYS);
+	pub const SurchargeReward: Balance = 150 * MILLICENTS;
+	pub const SignedClaimHandicap: u32 = 2;
+	pub const MaxDepth: u32 = 32;
+	pub const MaxValueSize: u32 = 16 * 1024;
+	// The lazy deletion runs inside on_initialize.
+	pub DeletionWeightLimit: Weight = AVERAGE_ON_INITIALIZE_RATIO *
+	   BlockWeights::get().max_block;
+	// The weight needed for decoding the queue should be less or equal than a fifth
+	// of the overall weight dedicated to the lazy deletion.
+	pub DeletionQueueDepth: u32 = ((DeletionWeightLimit::get() / (
+		  <Runtime as pallet_contracts::Config>::WeightInfo::on_initialize_per_queue_item(1) -
+		  <Runtime as pallet_contracts::Config>::WeightInfo::on_initialize_per_queue_item(0)
+	   )) / 5) as u32;
+	pub MaxCodeSize: u32 = 128 * 1024;
+ }
+ 
+ impl pallet_contracts::Config for Runtime {
+	type Time = Timestamp;
+	type Randomness = RandomnessCollectiveFlip;
+	type Currency = Balances;
+	type Event = Event;
+	type RentPayment = ();
+	type SignedClaimHandicap = SignedClaimHandicap;
+	type TombstoneDeposit = TombstoneDeposit;
+	type DepositPerContract = DepositPerContract;
+	type DepositPerStorageByte = DepositPerStorageByte;
+	type DepositPerStorageItem = DepositPerStorageItem;
+	type RentFraction = RentFraction;
+	type SurchargeReward = SurchargeReward;
+	type MaxDepth = MaxDepth;
+	type MaxValueSize = MaxValueSize;
+	type WeightPrice = pallet_transaction_payment::Module<Self>;
+	type WeightInfo = pallet_contracts::weights::SubstrateWeight<Self>;
+	type ChainExtension = ();
+	type DeletionQueueDepth = DeletionQueueDepth;
+	type DeletionWeightLimit = DeletionWeightLimit;
+	type MaxCodeSize = MaxCodeSize;
+ }
+ /*** End Added Block ***/
+
 parameter_types! {
 	pub const ExistentialDeposit: u128 = 500;
 	pub const MaxLocks: u32 = 50;
@@ -304,6 +372,7 @@ construct_runtime!(
 		Balances: pallet_balances::{Pallet, Call, Storage, Config<T>, Event<T>},
 		TransactionPayment: pallet_transaction_payment::{Pallet, Storage},
 		Sudo: pallet_sudo::{Pallet, Call, Config<T>, Storage, Event<T>},
+		Contracts: pallet_contracts::{Pallet, Call, Config<T>, Storage, Event<T>},
 		// Include the custom logic from the pallet-template in the runtime.
 		AresModule: pallet_ares::{Pallet, Call, Storage, Event<T>},
 		TemplateModule: pallet_template::{Pallet, Call, Storage, Event<T>},
@@ -472,6 +541,46 @@ impl_runtime_apis! {
 			TransactionPayment::query_fee_details(uxt, len)
 		}
 	}
+
+	/*** Add This Block ***/
+	impl pallet_contracts_rpc_runtime_api::ContractsApi<Block, AccountId, Balance, BlockNumber, Hash>
+	for Runtime
+	{
+	   fn call(
+		  origin: AccountId,
+		  dest: AccountId,
+		  value: Balance,
+		  gas_limit: u64,
+		  input_data: Vec<u8>,
+	   ) -> pallet_contracts_primitives::ContractExecResult {
+		  Contracts::bare_call(origin, dest, value, gas_limit, input_data)
+	   }
+ 
+	   fn instantiate(
+		  origin: AccountId,
+		  endowment: Balance,
+		  gas_limit: u64,
+		  code: pallet_contracts_primitives::Code<Hash>,
+		  data: Vec<u8>,
+		  salt: Vec<u8>,
+	   ) -> pallet_contracts_primitives::ContractInstantiateResult<AccountId, BlockNumber> {
+		  Contracts::bare_instantiate(origin, endowment, gas_limit, code, data, salt, true)
+	   }
+ 
+	   fn get_storage(
+		  address: AccountId,
+		  key: [u8; 32],
+	   ) -> pallet_contracts_primitives::GetStorageResult {
+		  Contracts::get_storage(address, key)
+	   }
+ 
+	   fn rent_projection(
+		  address: AccountId,
+	   ) -> pallet_contracts_primitives::RentProjectionResult<BlockNumber> {
+		  Contracts::rent_projection(address)
+	   }
+	}
+	/*** End Added Block ***/
 
 	#[cfg(feature = "runtime-benchmarks")]
 	impl frame_benchmarking::Benchmark<Block> for Runtime {

@@ -1,3 +1,4 @@
+use node_template_runtime::ContractsConfig;
 use sp_core::{Pair, Public, sr25519};
 use node_template_runtime::{
 	AccountId, AuraConfig, BalancesConfig, GenesisConfig, GrandpaConfig,
@@ -153,5 +154,12 @@ fn testnet_genesis(
 			// Assign network admin rights.
 			key: root_key,
 		},
+		/*** Add This Block ***/
+		pallet_contracts: ContractsConfig {
+			// println should only be enabled on development chains
+			current_schedule: pallet_contracts::Schedule::default()
+			   .enable_println(_enable_println),
+		 },
+		 /*** End Added Block ***/
 	}
 }
