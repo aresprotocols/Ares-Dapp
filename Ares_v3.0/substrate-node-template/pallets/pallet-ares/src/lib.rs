@@ -149,7 +149,52 @@ pub mod pallet {
 	pub type AggregatorResults<T: Config> = StorageMap<_, Blake2_128Concat, TokenSpec, AggregateResult<T::BlockNumber>>;
 
     #[pallet::hooks]
-    impl<T: Config> Hooks<BlockNumberFor<T>> for Pallet<T> {}
+    impl<T: Config> Hooks<BlockNumberFor<T>> for Pallet<T> {
+		// Identify requests that are considered dead and remove them
+		// on chain aggregator result
+		fn on_finalize(n: T::BlockNumber) {
+			for (request_identifier, request) in Requests::<T>::iter() {
+				if n > request.block_number + T::ValidityPeriod::get() {
+					// No result has been received in time
+					Requests::<T>::remove(request_identifier);
+
+					Self::deposit_event(Event::RemoveRequest(request_identifier));
+				}
+			}
+
+			for (token_identifier, price_vec) in OracleResults::<T>::iter() {
+
+				let mut price: u64 = 0;
+				let mut find: bool = false;
+
+				if <AggregatorResults<T>>::contains_key(&token_identifier) {
+
+					if price_vec.len() >= T::AggregateQueueNum::get() as usize {
+
+						let request = Self::aggregator_results(&token_identifier);
+
+						if n > request.unwrap().block_number + T::AggregateInterval::get() {
+							// update
+							 price = average_price(price_vec);
+							 find = true;
+						}
+					}
+				} else {
+					price = average_price(price_vec);
+					find = true;
+				}
+
+				if find {
+						<AggregatorResults::<T>>::insert(&token_identifier, AggregateResult {
+							block_number: n,
+							price,
+						});
+
+						Self::deposit_event(Event::AggregatorResult(price));
+				}
+			}
+		}
+	}
 
     #[pallet::call]   
 	impl<T:Config> Pallet<T> {
@@ -258,54 +303,6 @@ pub mod pallet {
 
 			Self::deposit_event(Event::OracleResult(request.aggregator_id, request_id, who, result));
 
-			Ok(())
-		}
-
-		// Identify requests that are considered dead and remove them
-		// on chain aggregator result
-		#[pallet::weight(1)]
-		fn on_finalize(_origin: OriginFor<T>, n: T::BlockNumber) -> DispatchResult {
-			for (request_identifier, request) in Requests::<T>::iter() {
-				if n > request.block_number + T::ValidityPeriod::get() {
-					// No result has been received in time
-					Requests::<T>::remove(request_identifier);
-
-					Self::deposit_event(Event::RemoveRequest(request_identifier));
-				}
-			}
-
-			for (token_identifier, price_vec) in OracleResults::<T>::iter() {
-
-				let mut price: u64 = 0;
-				let mut find: bool = false;
-
-				if <AggregatorResults<T>>::contains_key(&token_identifier) {
-
-					if price_vec.len() >= T::AggregateQueueNum::get() as usize {
-
-						let request = Self::aggregator_results(&token_identifier);
-
-						if n > request.unwrap().block_number + T::AggregateInterval::get() {
-							// update
-							 price = average_price(price_vec);
-							 find = true;
-						}
-					}
-				} else {
-					price = average_price(price_vec);
-					find = true;
-				}
-
-				if find {
-						<AggregatorResults::<T>>::insert(&token_identifier, AggregateResult {
-							block_number: n,
-							price,
-						});
-
-						Self::deposit_event(Event::AggregatorResult(price));
-				}
-
-			}
 			Ok(())
 		}
 	}
