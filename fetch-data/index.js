@@ -167,7 +167,7 @@ async function main() {
               var SpecIndex = Bytes2HexString(params)
               //get aggregator url and loading
               //var url =`http://141.164.45.97:8080/ares/api/getPartyPrice/${SpecIndex}/${id}`;
-              var url =`http://127.0.0.1:5566/api/getPartyPrice/${SpecIndex}`;
+              var url =`http://141.164.58.241:5566/api/getPartyPrice/${SpecIndex}`;
               console.log(url)
               sentRes(url,postData,"GET",function(data) {
                 console.log(JSON.parse(data).data)
