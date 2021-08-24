@@ -118,7 +118,7 @@ const showDrawer = (e) => {
             attrs={{
               palletRpc: 'aresModule',
               callable: 'registerAggregator',
-              inputParams: ['ok,huobi', 'bob', 'http://api.aresprotocol.com/api'],
+              inputParams: ['ok,huobi', 'bob', 'http://141.164.58.241:5566/api'],
               paramFields: [true, true, true]
             }}
           />

@@ -36,7 +36,7 @@ export default function Main (props) {
   const showDrawer = (e) => {
       console.log(e);
       setVisible(true);
-      fetch('http://api.aresprotocol.com/api/getpriceall/dotusdt')
+      fetch('http://141.164.58.241:5566/api/getPriceAll/dotusdt')
       .then(res => res.json())
       .then(dataList => {
         for (let i = 0; i < dataList.data.length; i++) {

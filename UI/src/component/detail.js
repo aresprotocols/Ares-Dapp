@@ -20,7 +20,7 @@ class EchartsTest extends Component {
 	componentWillReceiveProps(nextProps) {
 		let symbol=nextProps.datas;
 		if(symbol){
-			fetch('http://api.aresprotocol.com/api/getpriceall/'+symbol)
+			fetch('http://141.164.58.241:5566/api/getPriceAll/'+symbol)
 			.then(res => res.json())
 			.then(dataList => {
 				for (let i = 0; i < dataList.data.length; i++) {
@@ -38,7 +38,7 @@ class EchartsTest extends Component {
 				this.setState({dataList: dataList.data}); 
 			})
 			
-			fetch('http://api.aresprotocol.com//api/getPartyPrice/'+symbol)
+			fetch('http://141.164.58.241:5566/api/getPartyPrice/'+symbol)
 			.then(res => res.json())
 			.then(partyPrice => {
 				   var date=moment(partyPrice.data.ts).format('YYYY-MM-DD');
@@ -52,7 +52,7 @@ class EchartsTest extends Component {
    componentDidMount() {
 		let symbol=this.props.datas;
 		if(symbol){
-			fetch('http://api.aresprotocol.com/api/getpriceall/'+symbol)
+			fetch('http://141.164.58.241:5566/api/getPriceAll/'+symbol)
 			.then(res => res.json())
 			.then(dataList => {
 				for (let i = 0; i < dataList.data.length; i++) {
@@ -70,7 +70,7 @@ class EchartsTest extends Component {
 				this.setState({dataList: dataList.data}); 
 			})
 			
-			fetch('http://api.aresprotocol.com//api/getPartyPrice/'+symbol)
+			fetch('http://141.164.58.241:5566/api/getPartyPrice/'+symbol)
 			.then(res => res.json())
 			.then(partyPrice => {
 				var date=moment(partyPrice.data.ts).format('YYYY-MM-DD');

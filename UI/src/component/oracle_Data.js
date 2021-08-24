@@ -17,7 +17,7 @@ class oracleData extends Component {
 				if(pair){
 					this.setState({pair:pair});
 					
-					fetch('http://api.aresprotocol.com/api/getpriceall/'+pair)
+					fetch('http://141.164.58.241:5566/api/getPriceAll/'+pair)
 					.then(res => res.json())
 					.then(dataList => {
 						for (let i = 0; i < dataList.data.length; i++) {
