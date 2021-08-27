@@ -39,8 +39,9 @@ impl Environment for CustomEnvironment {
     type AccountId = <ink_env::DefaultEnvironment as Environment>::AccountId;
     type Balance = <ink_env::DefaultEnvironment as Environment>::Balance;
     type Hash = <ink_env::DefaultEnvironment as Environment>::Hash;
-    type BlockNumber = <ink_env::DefaultEnvironment as Environment>::BlockNumber;
     type Timestamp = <ink_env::DefaultEnvironment as Environment>::Timestamp;
+    type BlockNumber = <ink_env::DefaultEnvironment as Environment>::BlockNumber;
+    type RentFraction = <ink_env::DefaultEnvironment as Environment>::RentFraction;
 
     type ChainExtension = FetchPrice;
 }
@@ -52,7 +53,6 @@ mod patramaker {
     use ink_storage::{
         collections::HashMap as StorageMap,
         traits::{PackedLayout, SpreadLayout},
-        Lazy,
     };
     use crate::{Vec, format};
     use ownership::Ownable;
@@ -170,7 +170,7 @@ mod patramaker {
             let dai_token: Erc20 = FromAccountId::from_account_id(dai_contract);
 
             let message = format!("dai_token =  {:?}", dai_token);
-            ink_env::debug_println(&message);
+            ink_env::debug_println!("{}",&message);
 
             Self {
                 dai_token: dai_token,
@@ -244,7 +244,7 @@ mod patramaker {
 
             let message = format!("dai =  {:?}", dai);
 
-            ink_env::debug_println(&message);
+            ink_env::debug_println!("{}",&message);
 
             let cdp = CDP {
                 issuer: caller,
@@ -257,7 +257,7 @@ mod patramaker {
             self.dai_token.mint(caller, dai).unwrap();
 
             let message = format!("dai =  {:?}", dai);
-            ink_env::debug_println(&message);
+            ink_env::debug_println!("{}",&message);
 
 
             self.env().emit_event(IssueDAI {

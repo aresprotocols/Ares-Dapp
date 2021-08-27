@@ -1,9 +1,9 @@
 {
   "metadataVersion": "0.1.0",
   "source": {
-    "hash": "0xe9ab6612dec972c2b4c182381cbe2928f8d6243ab82258264619898273e41fec",
+    "hash": "0x35c8174118305b42be1fcf0e14ee10057b4270cda3c3ad7a68b4ba998ec54c80",
     "language": "ink! 3.0.0-rc3",
-    "compiler": "rustc 1.52.0-nightly"
+    "compiler": "rustc 1.56.0-nightly"
   },
   "contract": {
     "name": "erc20_issue",

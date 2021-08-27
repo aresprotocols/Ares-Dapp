@@ -1,16 +1,16 @@
 [package]
-name = "patramaker"
+name = "aresmaker"
 version = "0.1.0"
-authors = ["Patract Labs <tyler@patract.io>"]
+authors = ["Ares Protocol <info@aresprotocol.io>"]
 edition = "2018"
 
 [dependencies]
-ink_primitives = { version = "3.0.0-rc2", git = "https://github.com/paritytech/ink", default-features = false }
-ink_metadata = { version = "3.0.0-rc2", git = "https://github.com/paritytech/ink", default-features = false, features = ["derive"], optional = true }
-ink_env = { version = "3.0.0-rc2", git = "https://github.com/paritytech/ink", default-features = false }
-ink_storage = { version = "3.0.0-rc2", git = "https://github.com/paritytech/ink", default-features = false }
-ink_lang = { version = "3.0.0-rc2", git = "https://github.com/paritytech/ink", default-features = false }
-ink_prelude = { version = "3.0.0-rc2", git = "https://github.com/paritytech/ink", default-features = false }
+ink_primitives = { version = "3.0.0-rc3", git = "https://github.com/paritytech/ink", default-features = false }
+ink_metadata = { version = "3.0.0-rc3", git = "https://github.com/paritytech/ink", default-features = false, features = ["derive"], optional = true }
+ink_env = { version = "3.0.0-rc3", git = "https://github.com/paritytech/ink", default-features = false }
+ink_storage = { version = "3.0.0-rc3", git = "https://github.com/paritytech/ink", default-features = false }
+ink_lang = { version = "3.0.0-rc3", git = "https://github.com/paritytech/ink", default-features = false }
+ink_prelude = { version = "3.0.0-rc3", git = "https://github.com/paritytech/ink", default-features = false }
 
 scale = { package = "parity-scale-codec", version = "2.0", default-features = false, features = ["derive"] }
 scale-info = { version = "0.6", default-features = false, features = ["derive"], optional = true }
@@ -21,7 +21,7 @@ dai = { path = "dai", default-features = false, features = ["ink-as-dependency"]
 primitive-types = { version = "0.9.0", default-features = false, features = ["codec"] }
 
 [lib]
-name = "patramaker"
+name = "aresmaker"
 path = "lib.rs"
 crate-type = [
 	# Used for normal contract Wasm blobs.
