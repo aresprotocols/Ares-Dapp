@@ -13,13 +13,13 @@ export default class Index extends React.Component {
   render() {
     return (
       <div>
-<iframe 
+<iframe
                 style={{width:'100%', height:'600px', overflow:'visible'}}
-                ref="iframe" 
-                src="http://sdapps.aresprotocol.com" 
-                width="100%" 
-                height={this.state.iFrameHeight} 
-                scrolling="auto" 
+                ref="iframe"
+                src="http://sdapps.aresprotocol.io"
+                width="100%"
+                height={this.state.iFrameHeight}
+                scrolling="auto"
                 frameBorder="0"
             />
 

@@ -13,14 +13,14 @@ import 'echarts/lib/chart/lines'
 import 'echarts/lib/component/tooltip';
 import 'echarts/lib/component/title';
 import './css/detail.css';
-import moment from 'moment'; 
+import moment from 'moment';
 
 class EchartsTest extends Component {
 
 	componentWillReceiveProps(nextProps) {
 		let symbol=nextProps.datas;
 		if(symbol){
-			fetch('http://api.aresprotocol.com/api/getpriceall/'+symbol)
+			fetch('http://api.aresprotocol.io/api/getpriceall/'+symbol)
 			.then(res => res.json())
 			.then(dataList => {
 				for (let i = 0; i < dataList.data.length; i++) {
@@ -32,27 +32,27 @@ class EchartsTest extends Component {
 							 dataList.data[i].y=y;
 							 dataList.data[i].transform='translate('+x+','+y+')'
 						}
-						
+
 						this.setState({length:dataList.data.length});
 				this.setState({pair:symbol});
-				this.setState({dataList: dataList.data}); 
+				this.setState({dataList: dataList.data});
 			})
-			
-			fetch('http://api.aresprotocol.com//api/getPartyPrice/'+symbol)
+
+			fetch('http://api.aresprotocol.io//api/getPartyPrice/'+symbol)
 			.then(res => res.json())
 			.then(partyPrice => {
 				   var date=moment(partyPrice.data.ts).format('YYYY-MM-DD');
 				 var time=moment(partyPrice.data.ts).format('HH:mm:ss');
-				 this.setState({partyPrice: partyPrice.data,time:time,date:date}); 
+				 this.setState({partyPrice: partyPrice.data,time:time,date:date});
 			})
-			
+
 		}
  }
-	   
+
    componentDidMount() {
 		let symbol=this.props.datas;
 		if(symbol){
-			fetch('http://api.aresprotocol.com/api/getpriceall/'+symbol)
+			fetch('http://api.aresprotocol.io/api/getpriceall/'+symbol)
 			.then(res => res.json())
 			.then(dataList => {
 				for (let i = 0; i < dataList.data.length; i++) {
@@ -64,29 +64,29 @@ class EchartsTest extends Component {
 							dataList.data[i].y=y;
 							dataList.data[i].transform='translate('+x+','+y+')'
 						}
-						
+
 						this.setState({length:dataList.data.length});
 				this.setState({pair:symbol});
-				this.setState({dataList: dataList.data}); 
+				this.setState({dataList: dataList.data});
 			})
-			
-			fetch('http://api.aresprotocol.com//api/getPartyPrice/'+symbol)
+
+			fetch('http://api.aresprotocol.io//api/getPartyPrice/'+symbol)
 			.then(res => res.json())
 			.then(partyPrice => {
 				var date=moment(partyPrice.data.ts).format('YYYY-MM-DD');
 				var time=moment(partyPrice.data.ts).format('HH:mm:ss');
-				this.setState({partyPrice: partyPrice.data,time:time,date:date}); 
+				this.setState({partyPrice: partyPrice.data,time:time,date:date});
 			})
-			
+
 		}
-	 
-   }	
-  
+
+   }
+
    close(){
 	console.log(this); // null
 	this.props.myClose();
 	}
-  
+
 	constructor(){
 	       super()
 	       this.state = {
@@ -100,16 +100,16 @@ class EchartsTest extends Component {
 	   }
 
 
-	 
+
     render() {
-		
-	
+
+
 		const toFixed = ( dight, bits = 3 ) => {
 			return Math.round( dight * Math.pow( 10, bits ) ) / Math.pow( 10, bits )
 		  }
-			  
+
         return (
-		<Container  className="container" > 
+		<Container  className="container" >
 			<div className="flex_ font20"  onClick={this.close.bind(this)} > <Button  type="dashed" className="margn10" to="/Price Feed">Close</Button> <span>{this.state.pair} Price</span></div>
 			<div className="flex_" >
 				<div  className="aggregation-box" >
@@ -128,7 +128,7 @@ class EchartsTest extends Component {
 							return <line className="vis__line vis__line--pending" x1="375" y1="300" key={index} x2={item.x} y2={item.y}></line>
 						  })
 						}
-						
+
 						{
 						  this.state.dataList.map((item, index) => {
 								return 	<g data-testid="vis-oracle"  className="vis__oracle-group" transform={item.transform} >
@@ -137,7 +137,7 @@ class EchartsTest extends Component {
 								</g>
 						  })
 						}
-						
+
 						<g data-testid="vis-contract" className="vis__contract-group" transform="translate(375,300)">
 							<circle className="vis__contract vis__contract--fulfilled" r="60"></circle>
 							<g transform="translate(-15,-35)">
@@ -145,16 +145,16 @@ class EchartsTest extends Component {
 								 transform="scale(0.03)"></path>
 							</g>
 							<g className="vis__contract-label"><text className="vis__contract-label--answer" y="15" textAnchor="middle">${toFixed(this.state.partyPrice.price,6)}</text></g>
-						</g> 
+						</g>
 					</svg>
-					
+
 				</div>
 			</div>
 			<OracleData key={this.state.key}  datas={this.state.pair}  ></OracleData>
 			<div className="bottom" ></div>
 		</Container>
-		
-          
+
+
         );
     }
 }

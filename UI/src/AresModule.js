@@ -39,9 +39,9 @@ function Main (props) {
     {name:'xrp_usdt',symbol:'xrpusdt',price:''},
     {name:'ltc_usdt',symbol:'ltcusdt',price:''},
     {name:'bch_usdt',symbol:'bchusdt',price:''},
-    {name:'xlm_usdt',symbol:'xlmusdt',price:''} 
+    {name:'xlm_usdt',symbol:'xlmusdt',price:''}
   ]
-  
+
   let multi=[];
   for (let index = 0; index < data_list.length; index++) {
       multi.push(data_list[index].symbol);
@@ -52,7 +52,7 @@ function Main (props) {
     if (accountPair === null) {
       return;
     }
-	
+
     if (typeof (accountPair) === 'undefined') {
       return;
     }
@@ -84,10 +84,10 @@ function Main (props) {
 
     return () => unsubscribe && unsubscribe();
   }, [api.query.aresModule.oracleResults]);
-		
+
 		const [visible, setVisible] = useState(false);
 		const [pair, setPair] = useState(false);
-		
+
 const showDrawer = (e) => {
     setPair(e);
     setVisible(true);
@@ -95,8 +95,8 @@ const showDrawer = (e) => {
   const onClose = () => {
     setVisible(false);
   };
-		
-		
+
+
   return (
     <Grid.Column width={8}>
       <h1>Are Module</h1>
@@ -118,7 +118,7 @@ const showDrawer = (e) => {
             attrs={{
               palletRpc: 'aresModule',
               callable: 'registerAggregator',
-              inputParams: ['ok,huobi', 'bob', 'http://api.aresprotocol.com/api'],
+              inputParams: ['ok,huobi', 'bob', 'http://api.aresprotocol.io/api'],
               paramFields: [true, true, true]
             }}
           />
@@ -171,12 +171,12 @@ const showDrawer = (e) => {
               inputParams: [config.AGGREGATOR_ADDRESS, 'dotusdt', '0'],
               paramFields: [true, true, true]
             }}
-			
+
           />
         </Form.Field>
         <div style={{ overflowWrap: 'break-word' }}>{status}</div>
       </Form>
-      
+
 	  <Table celled striped size='small'>
 	    <Table.Header>
 	      <Table.Row>
@@ -210,11 +210,11 @@ const showDrawer = (e) => {
 	  							  </Table.Row>
 	  					  })
 	  					}
-	     
+
 	    </Table.Body>
 	  </Table>
-	  
-	  
+
+
 	   <Modal
 	     title="Aggregates"
 	     visible={visible}
@@ -224,7 +224,7 @@ const showDrawer = (e) => {
 	   >
 	      <DataSoure  myClose={onClose.bind(this)}    datas={pair}  ></DataSoure>
 	    </Modal>
-	  
+
     </Grid.Column>
   );
 }

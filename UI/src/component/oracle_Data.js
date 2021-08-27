@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Table, Grid,Container } from 'semantic-ui-react';
-import moment from 'moment'; 
+import moment from 'moment';
 
 class oracleData extends Component {
 	constructor(){
@@ -9,30 +9,30 @@ class oracleData extends Component {
 	           pair:"",
 			   dataList:[]
 	       }
-		   
-		   
+
+
 	   }
 	   componentWillReceiveProps(nextProps) {
 				let pair=nextProps.datas;
 				if(pair){
 					this.setState({pair:pair});
-					
-					fetch('http://api.aresprotocol.com/api/getpriceall/'+pair)
+
+					fetch('http://api.aresprotocol.io/api/getpriceall/'+pair)
 					.then(res => res.json())
 					.then(dataList => {
 						for (let i = 0; i < dataList.data.length; i++) {
 							 dataList.data[i].date=moment(dataList.data[i].date).format('YYYY-MM-DD HH:mm:ss');
 						}
-						this.setState({dataList: dataList.data}); 
+						this.setState({dataList: dataList.data});
 					})
 				}
 		 }
       componentDidMount() {
-	
-    } 
-	
-	
-	
+
+    }
+
+
+
     render() {
         return (
 				<Grid.Column className='bottom'>

@@ -3,7 +3,7 @@ import { Table, Grid } from 'semantic-ui-react';
 import { useSubstrate } from './substrate-lib';
 import { Drawer, Button ,Modal} from 'antd';
 
-import moment from 'moment'; 
+import moment from 'moment';
 export default function Main (props) {
   const { api } = useSubstrate();
   const [aggregatorMap, setAggregatorMap] = useState(new Map());
@@ -36,7 +36,7 @@ export default function Main (props) {
   const showDrawer = (e) => {
       console.log(e);
       setVisible(true);
-      fetch('http://api.aresprotocol.com/api/getpriceall/dotusdt')
+      fetch('http://api.aresprotocol.io/api/getpriceall/dotusdt')
       .then(res => res.json())
       .then(dataList => {
         for (let i = 0; i < dataList.data.length; i++) {
@@ -46,7 +46,7 @@ export default function Main (props) {
       })
   };
 
-  
+
 
   return (
     <Grid.Column>
@@ -81,7 +81,7 @@ export default function Main (props) {
         )}
         </Table.Body>
       </Table>
-	  
+
 	  <Modal
 	    title="Aggregates"
 	    visible={visible}
@@ -110,11 +110,11 @@ export default function Main (props) {
 					  })
 					}
 					</Table.Body>
-				  </Table> 
+				  </Table>
 
 
 
-       
+
       </Modal>
     </Grid.Column>
   );
