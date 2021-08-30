@@ -8,6 +8,7 @@
 .cargo
 # The cache for chain data in container
 .local
+.yarn
 node_modules
 .vscode
 build
